@@ -8,27 +8,27 @@
 
 import UIKit
 
-extension CollectionType {
+extension Collection {
     /// Return a copy of `self` with its elements shuffled
-    func shuffle() -> [Generator.Element] {
+    func shuffle() -> [Iterator.Element] {
         var list = Array(self)
         list.shuffleInPlace()
         return list
     }
     
-    func randomElement() -> Generator.Element {
+    func randomElement() -> Iterator.Element {
         return Array(self)[Int(arc4random_uniform(UInt32(Array(self).count)))]
     }
 }
 
-extension MutableCollectionType where Index == Int {
+extension MutableCollection where Index == Int {
     /// Shuffle the elements of `self` in-place.
     mutating func shuffleInPlace() {
         // empty and single-element collections don't shuffle
         if count < 2 { return }
         
-        for i in 0..<count - 1 {
-            let j = Int(arc4random_uniform(UInt32(count - i))) + i
+        for i in startIndex ..< endIndex - 1 {
+            let j = Int(arc4random_uniform(UInt32(endIndex - i))) + i
             guard i != j else { continue }
             swap(&self[i], &self[j])
         }
@@ -39,11 +39,11 @@ extension UIColor {
     convenience init(hex: String, alpha: CGFloat = 1) {
         assert(hex[hex.startIndex] == "#", "Expected hex string of format #RRGGBB")
         
-        let scanner = NSScanner(string: hex)
+        let scanner = Scanner(string: hex)
         scanner.scanLocation = 1  // skip #
         
         var rgb: UInt32 = 0
-        scanner.scanHexInt(&rgb)
+        scanner.scanHexInt32(&rgb)
         
         self.init(
             red:   CGFloat((rgb & 0xFF0000) >> 16)/255.0,
@@ -77,7 +77,7 @@ class GameViewController: UIViewController {
     @IBOutlet weak var scoreLabel: UILabel!
     @IBOutlet weak var levelLabel: UILabel!
     @IBOutlet var pauseView: UIView!
-    var timer:NSTimer?
+    var timer:Timer?
     var timeLeft = 0, score = -5, level = 1, questionCount = 0
    
     override func viewDidLoad() {
@@ -93,9 +93,9 @@ class GameViewController: UIViewController {
         self.questionCount = 0
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.orientationHandling(UIApplication.sharedApplication().statusBarOrientation)
+        self.orientationHandling(UIApplication.shared.statusBarOrientation)
     }
     
     override func didReceiveMemoryWarning() {
@@ -103,33 +103,33 @@ class GameViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func unwindToHome(segue: UIStoryboardSegue) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func unwindToHome(_ segue: UIStoryboardSegue) {
+        self.dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func pauseButtonTapped(sender: AnyObject) {
-        self.pauseView.hidden = false;
+    @IBAction func pauseButtonTapped(_ sender: AnyObject) {
+        self.pauseView.isHidden = false;
         self.timer!.invalidate()
     }
     
-    @IBAction func resumeButtonTapped(sender: AnyObject) {
-        self.pauseView.hidden = true;
-        self.timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(GameViewController.updateTime), userInfo: nil, repeats: true)
+    @IBAction func resumeButtonTapped(_ sender: AnyObject) {
+        self.pauseView.isHidden = true;
+        self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(GameViewController.updateTime), userInfo: nil, repeats: true)
     }
     
-    override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+    override func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
         self.orientationHandling(toInterfaceOrientation)
     }
     
-    func orientationHandling(orientation:UIInterfaceOrientation) {
+    func orientationHandling(_ orientation:UIInterfaceOrientation) {
         switch orientation {
-        case UIInterfaceOrientation.Portrait, UIInterfaceOrientation.PortraitUpsideDown:
-            self.questionFirstPartLabel.textAlignment = NSTextAlignment.Right
-            self.questionSecondPartLabel.textAlignment = NSTextAlignment.Left
-            self.questionView.backgroundColor = UIColor.whiteColor()
-        case UIInterfaceOrientation.LandscapeLeft, UIInterfaceOrientation.LandscapeRight:
-            self.questionFirstPartLabel.textAlignment = NSTextAlignment.Center
-            self.questionSecondPartLabel.textAlignment = NSTextAlignment.Center
+        case UIInterfaceOrientation.portrait, UIInterfaceOrientation.portraitUpsideDown:
+            self.questionFirstPartLabel.textAlignment = NSTextAlignment.right
+            self.questionSecondPartLabel.textAlignment = NSTextAlignment.left
+            self.questionView.backgroundColor = UIColor.white
+        case UIInterfaceOrientation.landscapeLeft, UIInterfaceOrientation.landscapeRight:
+            self.questionFirstPartLabel.textAlignment = NSTextAlignment.center
+            self.questionSecondPartLabel.textAlignment = NSTextAlignment.center
             self.questionView.backgroundColor = lightGreyColor
         default: break
         }
@@ -147,9 +147,9 @@ class GameViewController: UIViewController {
         
         let colorsArray = colors.shuffle()
         let textsArray = texts.shuffle()
-        for (index, button) in self.buttonsArray.enumerate() {
+        for (index, button) in self.buttonsArray.enumerated() {
             button.backgroundColor = colorsArray[index]
-            button.setTitle(textsArray[index], forState: UIControlState.Normal)
+            button.setTitle(textsArray[index], for: UIControlState())
         }
         self.questionFirstPartLabel.text = question.randomElement()
         self.questionSecondPartLabel.text = texts.randomElement()
@@ -161,25 +161,25 @@ class GameViewController: UIViewController {
     }
     
     func animateButtons() {
-        self.buttonsArray[0].transform = CGAffineTransformMakeScale(1.2, 1.2)
-        UIView.animateWithDuration(0.1, animations: {
-            self.buttonsArray[0].transform = CGAffineTransformMakeScale(1, 1)
-            self.buttonsArray[1].transform = CGAffineTransformMakeScale(1.2, 1.2)
-        }) { (true) in
-            UIView.animateWithDuration(0.1, animations: {
-                self.buttonsArray[1].transform = CGAffineTransformMakeScale(1, 1)
-                self.buttonsArray[2].transform = CGAffineTransformMakeScale(1.2, 1.2)
+        self.buttonsArray[0].transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        UIView.animate(withDuration: 0.1, animations: {
+            self.buttonsArray[0].transform = CGAffineTransform(scaleX: 1, y: 1)
+            self.buttonsArray[1].transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        }, completion: { (true) in
+            UIView.animate(withDuration: 0.1, animations: {
+                self.buttonsArray[1].transform = CGAffineTransform(scaleX: 1, y: 1)
+                self.buttonsArray[2].transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
                 }, completion: { (true) in
-                    UIView.animateWithDuration(0.1, animations: {
-                        self.buttonsArray[2].transform = CGAffineTransformMakeScale(1, 1)
-                        self.buttonsArray[3].transform = CGAffineTransformMakeScale(1.2, 1.2)
+                    UIView.animate(withDuration: 0.1, animations: {
+                        self.buttonsArray[2].transform = CGAffineTransform(scaleX: 1, y: 1)
+                        self.buttonsArray[3].transform = CGAffineTransform(scaleX: 1.2, y: 1.2)
                         }, completion: { (true) in
-                            UIView.animateWithDuration(0.1, animations: {
-                                self.buttonsArray[3].transform = CGAffineTransformMakeScale(1, 1)
+                            UIView.animate(withDuration: 0.1, animations: {
+                                self.buttonsArray[3].transform = CGAffineTransform(scaleX: 1, y: 1)
                             })
                     })
             })
-        }
+        }) 
     }
     
     func updateTime() {
@@ -194,7 +194,7 @@ class GameViewController: UIViewController {
         self.timer!.invalidate()
         self.gameOverLabel.text = "Game Over!\n Your final score is"
         self.finalScoreLabel.text = "\(self.score)"
-        self.scoreView.hidden = false
+        self.scoreView.isHidden = false
         self.updateHighScore()
     }
     
@@ -204,15 +204,15 @@ class GameViewController: UIViewController {
         
         var data = LeaderBoardEntry.getLeaderboardData()
             
-            for (index, leaderBoardEntry) in data.enumerate() {
+            for (index, leaderBoardEntry) in data.enumerated() {
                 if newEntry.score >= leaderBoardEntry.score  {
-                    data.insert(newEntry, atIndex: index)
+                    data.insert(newEntry, at: index)
                     break
                 }
             }
             
             if data.count > 5 {
-                data.removeRange(5..<data.count)
+                data.removeSubrange(5..<data.count)
             }
             
             LeaderBoardEntry.setLeaderboardData(data)
@@ -221,13 +221,13 @@ class GameViewController: UIViewController {
     @IBAction func restartGame() {
         self.resetValues()
         self.randomise()
-        self.timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(GameViewController.updateTime), userInfo: nil, repeats: true)
-        self.scoreView.hidden = true
-        self.pauseView.hidden = true
+        self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(GameViewController.updateTime), userInfo: nil, repeats: true)
+        self.scoreView.isHidden = true
+        self.pauseView.isHidden = true
     }
     
     
-    @IBAction func colorButtonTapped(button: UIButton) {
+    @IBAction func colorButtonTapped(_ button: UIButton) {
         switch self.questionFirstPartLabel.text! {
         case "COLOR":
             if button.backgroundColor!.isEqual(gameColors[self.questionSecondPartLabel.text!]) {
@@ -237,7 +237,7 @@ class GameViewController: UIViewController {
             }
             
             case "TEXT":
-                if button.titleForState(UIControlState.Normal)! == self.questionSecondPartLabel.text {
+                if button.title(for: UIControlState())! == self.questionSecondPartLabel.text {
                     self.randomise()
                 } else {
                     self.stopGame()

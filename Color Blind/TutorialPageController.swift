@@ -17,24 +17,24 @@ class TutorialPageController: UIPageViewController, UIPageViewControllerDataSour
         setupPageControl()
     }
     
-    private func setupPageControl() {
+    fileprivate func setupPageControl() {
         self.dataSource = self
         
-        self.tutorial1 = self.storyboard!.instantiateViewControllerWithIdentifier("tutorialpage1")
-        self.tutorial2 = self.storyboard!.instantiateViewControllerWithIdentifier("tutorialpage2")
-        self.tutorial3 = self.storyboard!.instantiateViewControllerWithIdentifier("tutorialpage3")
-        self.tutorial4 = self.storyboard!.instantiateViewControllerWithIdentifier("tutorialpage4")
+        self.tutorial1 = self.storyboard!.instantiateViewController(withIdentifier: "tutorialpage1")
+        self.tutorial2 = self.storyboard!.instantiateViewController(withIdentifier: "tutorialpage2")
+        self.tutorial3 = self.storyboard!.instantiateViewController(withIdentifier: "tutorialpage3")
+        self.tutorial4 = self.storyboard!.instantiateViewController(withIdentifier: "tutorialpage4")
         
         self.pagesArray = [self.tutorial1!, self.tutorial2!, self.tutorial3!, self.tutorial4!]
         
-        self.setViewControllers([self.tutorial1!], direction: UIPageViewControllerNavigationDirection.Forward, animated: false, completion: nil)
+        self.setViewControllers([self.tutorial1!], direction: UIPageViewControllerNavigationDirection.forward, animated: false, completion: nil)
         let appearance = UIPageControl.appearance()
-        appearance.pageIndicatorTintColor = UIColor.grayColor()
-        appearance.currentPageIndicatorTintColor = UIColor.whiteColor()
-        appearance.backgroundColor = UIColor.clearColor()
+        appearance.pageIndicatorTintColor = UIColor.gray
+        appearance.currentPageIndicatorTintColor = UIColor.white
+        appearance.backgroundColor = UIColor.clear
     }
     
-    func pageViewController(pageViewController: UIPageViewController, viewControllerBeforeViewController viewController: UIViewController) -> UIViewController? {
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
         switch viewController {
         case self.tutorial1!:
@@ -50,7 +50,7 @@ class TutorialPageController: UIPageViewController, UIPageViewControllerDataSour
         }
     }
     
-    func pageViewController(pageViewController: UIPageViewController, viewControllerAfterViewController viewController: UIViewController) -> UIViewController? {
+    func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
         
         switch viewController {
         case self.tutorial1!:
@@ -66,11 +66,11 @@ class TutorialPageController: UIPageViewController, UIPageViewControllerDataSour
         }
     }
     
-    func presentationCountForPageViewController(pageViewController: UIPageViewController) -> Int {
+    func presentationCount(for pageViewController: UIPageViewController) -> Int {
         return 4
     }
     
-    func presentationIndexForPageViewController(pageViewController: UIPageViewController) -> Int {
+    func presentationIndex(for pageViewController: UIPageViewController) -> Int {
         return 0
     }
 }

@@ -17,12 +17,12 @@ class SettingsViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    @IBAction func tappedOnUsername(sender: AnyObject) {
-        self.usernameView.hidden = false
+    @IBAction func tappedOnUsername(_ sender: AnyObject) {
+        self.usernameView.isHidden = false
         self.usernameTextField.becomeFirstResponder()
     }
-    @IBAction func tappedOnTintView(sender: AnyObject) {
+    @IBAction func tappedOnTintView(_ sender: AnyObject) {
         self.usernameTextField.resignFirstResponder()
-        self.usernameView.hidden = true
+        self.usernameView.isHidden = true
     }
 }

@@ -23,24 +23,24 @@ class LeaderBoardEntry: NSObject, NSCoding {
         
         self.init(name: "",score: 0,level: 1)
         
-        if aDecoder.decodeObjectForKey("name") != nil {
-            name = aDecoder.decodeObjectForKey("name") as! String
+        if aDecoder.decodeObject(forKey: "name") != nil {
+            name = aDecoder.decodeObject(forKey: "name") as! String
         } else {
             name = "No_Name"
         }
-        score = aDecoder.decodeIntegerForKey("score")
-        level = aDecoder.decodeIntegerForKey("level")
+        score = aDecoder.decodeInteger(forKey: "score")
+        level = aDecoder.decodeInteger(forKey: "level")
     }
     
-    func encodeWithCoder(aCoder: NSCoder) {
+    func encode(with aCoder: NSCoder) {
         aCoder.encodeConditionalObject(self.name, forKey: "name")
-        aCoder.encodeInteger(self.score, forKey: "score")
-        aCoder.encodeInteger(self.level, forKey: "level")
+        aCoder.encode(self.score, forKey: "score")
+        aCoder.encode(self.level, forKey: "level")
     }
     
     class func getLeaderboardData() -> [LeaderBoardEntry] {
         
-        guard let data = NSKeyedUnarchiver.unarchiveObjectWithFile(getleaderBoardFilePath()) as? [LeaderBoardEntry]
+        guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: getleaderBoardFilePath()) as? [LeaderBoardEntry]
         else {
             return [LeaderBoardEntry(name:"No_Name", score:0, level:1)]
         }
@@ -48,20 +48,20 @@ class LeaderBoardEntry: NSObject, NSCoding {
     }
     
     class func getleaderBoardFilePath() -> String {
-        let path = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as String
-        let documentsURL = NSURL(fileURLWithPath: path)
-        let filePath = documentsURL.URLByAppendingPathComponent("Leaderboard").path!
-        let fileManager = NSFileManager.defaultManager()
-        if fileManager.fileExistsAtPath(filePath) {
+        let path = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        let documentsURL = URL(fileURLWithPath: path)
+        let filePath = documentsURL.appendingPathComponent("Leaderboard").path
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: filePath) {
             return filePath
         } else {
             NSKeyedArchiver.archiveRootObject([LeaderBoardEntry(name: "No_Name", score: 0, level: 1)], toFile:filePath)
             print("FILE NOT AVAILABLE")
         }
-        return documentsURL.URLByAppendingPathComponent("").path!
+        return documentsURL.appendingPathComponent("").path
     }
     
-    class func setLeaderboardData(leaderboardArray:[LeaderBoardEntry]) {
+    class func setLeaderboardData(_ leaderboardArray:[LeaderBoardEntry]) {
         NSKeyedArchiver.archiveRootObject(leaderboardArray, toFile: getleaderBoardFilePath())
     }
 }

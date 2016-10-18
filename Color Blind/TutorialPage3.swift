@@ -19,39 +19,39 @@ class TutorialPage3: UIViewController {
     var textLabelTransform:CGAffineTransform = CGAffineTransform()
     var colorLabelTransform:CGAffineTransform = CGAffineTransform()
     var redButtonTransform:CGAffineTransform = CGAffineTransform()
-    var timer:NSTimer? = nil
+    var timer:Timer? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.textLabelTransform = self.textLabel.transform
         self.colorLabelTransform = self.colorLabel.transform
         self.redButtonTransform = self.redButton.transform
-        self.timer = NSTimer.scheduledTimerWithTimeInterval(0.015, target: self, selector: #selector(TutorialPage3.startAnimations), userInfo: nil, repeats: true)
+        self.timer = Timer.scheduledTimer(timeInterval: 0.015, target: self, selector: #selector(TutorialPage3.startAnimations), userInfo: nil, repeats: true)
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if self.timer?.valid == false {
-            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.015, target: self, selector: #selector(TutorialPage3.startAnimations), userInfo: nil, repeats: true)
+        if self.timer?.isValid == false {
+            self.timer = Timer.scheduledTimer(timeInterval: 0.015, target: self, selector: #selector(TutorialPage3.startAnimations), userInfo: nil, repeats: true)
         }
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.timer?.invalidate()
     }
     
     func startAnimations() {
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), {
-            dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.high).async(execute: {
+            DispatchQueue.main.async(execute: {
                 switch self.turn {
                 case 1:
                     self.textLabel.font = UIFont(name: "Comfortaa-Bold", size: 25+CGFloat((self.t3 - 1)*30))
                 case 2:
                     self.colorLabel.font = UIFont(name: "Comfortaa-Bold", size: 25+CGFloat((self.t3 - 1)*30))
                 case 3:
-                    self.redButton.transform = CGAffineTransformScale(self.colorLabelTransform, CGFloat(self.t3), CGFloat(self.t3))
+                    self.redButton.transform = self.colorLabelTransform.scaledBy(x: CGFloat(self.t3), y: CGFloat(self.t3))
                 default:break
                 }
             })

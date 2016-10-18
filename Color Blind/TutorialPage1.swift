@@ -17,35 +17,35 @@ class TutorialPage1: UIViewController {
     
     var textLabelTransform:CGAffineTransform = CGAffineTransform()
     var colorLabelTransform:CGAffineTransform = CGAffineTransform()
-    var timer:NSTimer? = nil
+    var timer:Timer? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.textLabelTransform = self.textLabel.transform
         self.colorLabelTransform = self.colorLabel.transform
-        self.timer = NSTimer.scheduledTimerWithTimeInterval(0.008, target: self, selector: #selector(TutorialPage1.startAnimations), userInfo: nil, repeats: true)
+        self.timer = Timer.scheduledTimer(timeInterval: 0.008, target: self, selector: #selector(TutorialPage1.startAnimations), userInfo: nil, repeats: true)
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if self.timer?.valid == false {
-            self.timer = NSTimer.scheduledTimerWithTimeInterval(0.008, target: self, selector: #selector(TutorialPage1.startAnimations), userInfo: nil, repeats: true)
+        if self.timer?.isValid == false {
+            self.timer = Timer.scheduledTimer(timeInterval: 0.008, target: self, selector: #selector(TutorialPage1.startAnimations), userInfo: nil, repeats: true)
         }
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.timer?.invalidate()
     }
     
     func startAnimations() {
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), {
-            dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async(execute: {
+            DispatchQueue.main.async(execute: {
                 if self.turn {
-                    self.textLabel.transform = CGAffineTransformScale(self.textLabelTransform, CGFloat(self.t3), CGFloat(self.t3))
+                    self.textLabel.transform = self.textLabelTransform.scaledBy(x: CGFloat(self.t3), y: CGFloat(self.t3))
                 } else {
-                    self.colorLabel.transform = CGAffineTransformScale(self.colorLabelTransform, CGFloat(self.t3), CGFloat(self.t3))
+                    self.colorLabel.transform = self.colorLabelTransform.scaledBy(x: CGFloat(self.t3), y: CGFloat(self.t3))
                 }
             })
             

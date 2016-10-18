@@ -23,7 +23,7 @@ class LeaderBoardViewController: UIViewController {
 
         let data = LeaderBoardEntry.getLeaderboardData()
             
-            for (index, leaderBoardEntry) in data.enumerate() {
+            for (index, leaderBoardEntry) in data.enumerated() {
                 self.nameLabelCollection[index].text = "\(leaderBoardEntry.name)"
                 self.scoreLabelCollection[index].text = "\(leaderBoardEntry.score)"
             }

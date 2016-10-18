@@ -11,29 +11,29 @@ import UIKit
 class TutorialPage4: UIViewController {
     @IBOutlet weak var timeLabel: UILabel!
     var timeLeft = 4
-    var timer:NSTimer? = nil
+    var timer:Timer? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(TutorialPage4.startAnimations), userInfo: nil, repeats: true)
+        self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(TutorialPage4.startAnimations), userInfo: nil, repeats: true)
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if self.timer?.valid == false {
-            self.timer = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(TutorialPage4.startAnimations), userInfo: nil, repeats: true)
+        if self.timer?.isValid == false {
+            self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(TutorialPage4.startAnimations), userInfo: nil, repeats: true)
         }
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.timer?.invalidate()
     }
     
     func startAnimations() {
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), {
-            dispatch_async(dispatch_get_main_queue(), {
+        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.high).async(execute: {
+            DispatchQueue.main.async(execute: {
                 self.timeLabel.text = "\(self.timeLeft)"
                 if self.timeLeft == 0 {
                     self.timeLeft = 6

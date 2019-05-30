@@ -27,7 +27,7 @@ class TutorialPageController: UIPageViewController, UIPageViewControllerDataSour
         
         self.pagesArray = [self.tutorial1!, self.tutorial2!, self.tutorial3!, self.tutorial4!]
         
-        self.setViewControllers([self.tutorial1!], direction: UIPageViewControllerNavigationDirection.forward, animated: false, completion: nil)
+        self.setViewControllers([self.tutorial1!], direction: UIPageViewController.NavigationDirection.forward, animated: false, completion: nil)
         let appearance = UIPageControl.appearance()
         appearance.pageIndicatorTintColor = UIColor.gray
         appearance.currentPageIndicatorTintColor = UIColor.white

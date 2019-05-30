@@ -30,9 +30,8 @@ class TutorialPage4: UIViewController {
         self.timer?.invalidate()
     }
     
-    func startAnimations() {
-        
-        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.high).async(execute: {
+    @objc func startAnimations() {
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async(execute: {
             DispatchQueue.main.async(execute: {
                 self.timeLabel.text = "\(self.timeLeft)"
                 if self.timeLeft == 0 {

@@ -36,8 +36,8 @@ class BaseViewController: UIViewController {
         self.timer?.invalidate()
     }
     
-    func startAnimations() {        
-        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.high).async(execute: {
+    @objc func startAnimations() {        
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async(execute: {
             
             let r1 = 20.0
             let x1 = r1 * sin(self.t1) + 270

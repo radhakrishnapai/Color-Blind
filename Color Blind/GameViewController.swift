@@ -30,7 +30,7 @@ extension MutableCollection where Index == Int {
         for i in startIndex ..< endIndex - 1 {
             let j = Int(arc4random_uniform(UInt32(endIndex - i))) + i
             guard i != j else { continue }
-            swap(&self[i], &self[j])
+            self.swapAt(i, j)
         }
     }
 }
@@ -145,11 +145,11 @@ class GameViewController: UIViewController {
             self.questionCount = 0
         }
         
-        let colorsArray = colors.shuffle()
+        let colorsArray:[UIColor] = colors.shuffle()
         let textsArray = texts.shuffle()
         for (index, button) in self.buttonsArray.enumerated() {
             button.backgroundColor = colorsArray[index]
-            button.setTitle(textsArray[index], for: UIControlState())
+            button.setTitle(textsArray[index], for: UIControl.State())
         }
         self.questionFirstPartLabel.text = question.randomElement()
         self.questionSecondPartLabel.text = texts.randomElement()
@@ -182,7 +182,7 @@ class GameViewController: UIViewController {
         }) 
     }
     
-    func updateTime() {
+    @objc func updateTime() {
         self.timeLeft -= 1
         self.timerLabel.text = "\(timeLeft)"
         if self.timeLeft <= 0 {
@@ -237,7 +237,7 @@ class GameViewController: UIViewController {
             }
             
             case "TEXT":
-                if button.title(for: UIControlState())! == self.questionSecondPartLabel.text {
+                if button.title(for: UIControl.State())! == self.questionSecondPartLabel.text {
                     self.randomise()
                 } else {
                     self.stopGame()

@@ -41,9 +41,9 @@ class TutorialPage3: UIViewController {
         self.timer?.invalidate()
     }
     
-    func startAnimations() {
+    @objc func startAnimations() {
         
-        DispatchQueue.global(priority: DispatchQueue.GlobalQueuePriority.high).async(execute: {
+        DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async(execute: {
             DispatchQueue.main.async(execute: {
                 switch self.turn {
                 case 1:

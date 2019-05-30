@@ -38,7 +38,7 @@ class TutorialPage1: UIViewController {
         self.timer?.invalidate()
     }
     
-    func startAnimations() {
+    @objc func startAnimations() {
         
         DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async(execute: {
             DispatchQueue.main.async(execute: {
